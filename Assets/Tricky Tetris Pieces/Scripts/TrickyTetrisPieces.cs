@@ -206,7 +206,8 @@ public class TrickyTetrisPieces : MonoBehaviour {
 
     // Generates the grid
     private void GenerateGrid() {
-        GenerateTestGrid(); // change later
+        TetrisGridFiller.GenerateTetrisFill(); // Written by Timwi - repurposed from The Blue Button
+        Debug.LogFormat("[Tricky Tetris Pieces #{0}] Grid generated successfully.", moduleId);
     }
 
     // Generates the testing grid

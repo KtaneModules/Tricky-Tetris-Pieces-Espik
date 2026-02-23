@@ -1,4 +1,6 @@
-﻿using System;
+﻿/// Written by Timwi - repurposed from The Blue Button
+
+using System;
 
 public struct PolyominoPlacement : IEquatable<PolyominoPlacement>
 {

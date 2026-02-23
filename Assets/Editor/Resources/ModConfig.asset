@@ -25,10 +25,10 @@ MonoBehaviour:
     Module ID: TrickyTetrisPieces
 
 
-    Manual: <available soon>
+    Manual: https://ktane.timwi.de/HTML/Tricky%20Tetris%20Pieces.html
 
 
-    Source Code: <available soon>'
+    Source Code: https://github.com/Espik/Tricky-Tetris-Pieces'
   version: v1.0
   outputFolder: build
-  previewImage: {fileID: 0}
+  previewImage: {fileID: 2800000, guid: 47307ade6e4798a4f9ffb237f4feaaa4, type: 3}
