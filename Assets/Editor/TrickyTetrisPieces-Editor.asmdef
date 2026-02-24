@@ -1,0 +1,10 @@
+{
+  "name": "TrickyTetrisPieces-Editor",
+  "references": [
+    "TrickyTetrisPieces"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}

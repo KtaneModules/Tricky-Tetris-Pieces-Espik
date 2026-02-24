@@ -64,7 +64,7 @@ public class TrickyTetrisPieces : MonoBehaviour {
     private int[] gridIDs = new int[200];
     private char[] gridShapes = new char[200];
 
-    private short[] pieceCounts = new short[7];
+    private short[] shapeCounts = new short[7];
 
     private int firstPieceIndex;
     private int firstPiecePalette;
@@ -180,8 +180,8 @@ public class TrickyTetrisPieces : MonoBehaviour {
             gridShapes[i] = '.';
         }
 
-        for (int i = 0; i < pieceCounts.Length; i++)
-            pieceCounts[i] = 0;
+        for (int i = 0; i < shapeCounts.Length; i++)
+            shapeCounts[i] = 0;
 
         // Generates the grid
         if (USE_TEST_GRID)
@@ -206,6 +206,41 @@ public class TrickyTetrisPieces : MonoBehaviour {
     // Generates the grid
     private void GenerateGrid() {
         gridIDs = TetrisGridFiller.GenerateTetrisFill().Solution; // Written by Timwi - repurposed from The Blue Button
+
+        // Obtains the shapes from the grid IDs
+        int[] foundPostions = new int[4];
+        var positionsFound = 0;
+        var foundShape = '.';
+
+        for (int i = 0; i < pieces.Length; i++) {
+            foundPostions = new int[]{ 0, 0, 0, 0 };
+            positionsFound = 0;
+
+            for (int j = 0; j < gridIDs.Length; j++) {
+                if (gridIDs[j] == i) {
+                    foundPostions[positionsFound] = j;
+                    positionsFound++;
+
+                    if (positionsFound > 3)
+                        break;
+                }
+            }
+
+            foundShape = DetermineShape(foundPostions); // Gets the shape
+
+            for (int j = 0; j < foundPostions.Length; j++)
+                gridShapes[foundPostions[j]] = foundShape;
+
+            for (int j = 0; j < SHAPE_NAMES.Length; j++) {
+                if (SHAPE_NAMES[j] == foundShape) {
+                    shapeCounts[j]++;
+                    break;
+                }
+            }
+
+            pieces[i] = new TetrisPiece(i, foundShape, foundPostions);
+        }
+
         Debug.LogFormat("[Tricky Tetris Pieces #{0}] Grid generated successfully.", moduleId);
     }
 
@@ -233,9 +268,9 @@ public class TrickyTetrisPieces : MonoBehaviour {
             gridIDs[i] = testGridIDs[i];
 
         for (int i = 100; i < gridIDs.Length; i++)
-            gridIDs[i] = (gridIDs[i - 100] + 25);
+            gridIDs[i] = gridIDs[i - 100] + 25;
 
-        pieceCounts = new short[] { 8, 8, 6, 6, 6, 8, 8 };
+        shapeCounts = new short[] { 8, 8, 6, 6, 6, 8, 8 };
 
         for (int i = 0; i < pieces.Length; i++) {
             int[] positions = new int[4];
@@ -258,6 +293,71 @@ public class TrickyTetrisPieces : MonoBehaviour {
         }
 
         Debug.LogFormat("[Tricky Tetris Pieces #{0}] The module is using a fixed grid. This could either be for testing or the algorithm has failed.", moduleId);
+    }
+
+    // Determines the shape of the piece from the relative positions
+    private char DetermineShape(int[] pos) {
+        switch (pos[1] - pos[0]) {
+            case 1:
+            switch (pos[2] - pos[0]) {
+                case 2:
+                switch (pos[3] - pos[0]) {
+                    case 3: return 'I';
+                    case 10: return 'L';
+                    case 11: return 'T';
+                    case 12: return 'J';
+                }
+                break;
+
+                case 9: return 'S';
+
+                case 10:
+                switch (pos[3] - pos[0]) {
+                    case 11: return 'O';
+                    case 20: return 'J';
+                }
+                break;
+
+                case 11:
+                switch (pos[3] - pos[0]) {
+                    case 12: return 'Z';
+                    case 21: return 'L';
+                }
+                break;
+            }
+            break;
+
+            case 8: return 'L';
+
+            case 9:
+            switch (pos[3] - pos[0]) {
+                case 19: return 'Z';
+                default: return 'T';
+            }
+
+            case 10:
+            switch (pos[2] - pos[0]) {
+                case 11:
+                switch (pos[3] - pos[0]) {
+                    case 12: return 'J';
+                    case 20: return 'T';
+                    case 21: return 'S';
+                }
+                break;
+
+                case 19: return 'J';
+
+                case 20:
+                switch (pos[3] - pos[0]) {
+                    case 21: return 'L';
+                    case 30: return 'I';
+                }
+                break;
+            }
+            break;
+        }
+
+        return '.';
     }
 
 
@@ -432,7 +532,7 @@ public class TrickyTetrisPieces : MonoBehaviour {
         // Checks if the new piece is present on the module
         for (int i = 0; i < SHAPE_NAMES.Length; i++) {
             if (SHAPE_NAMES[i] == secondPieceShape) {
-                noSecondPiece = pieceCounts[i] == 0;
+                noSecondPiece = shapeCounts[i] == 0;
 
                 if (noSecondPiece)
                     Debug.LogFormat("[Tricky Tetris Pieces #{0}] There are no {1} pieces on the module. Press the first piece again.", moduleId, secondPieceShape);
